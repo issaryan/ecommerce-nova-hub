@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { useCart } from '@/contexts/CartContext';
 import {
@@ -9,15 +9,27 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { ShoppingCart } from "lucide-react";
+import { ShoppingCart, CreditCard, Wallet, Truck } from "lucide-react";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
+import { Label } from "@/components/ui/label"
 
 export const Cart = () => {
   const { items, removeFromCart, updateQuantity } = useCart();
+  const [paymentMethod, setPaymentMethod] = useState('card');
+  const [deliveryMethod, setDeliveryMethod] = useState('standard');
 
   const total = items.reduce((sum, item) => {
     const price = parseFloat(item.price.replace('€', '').replace(',', '.'));
     return sum + price * item.quantity;
   }, 0);
+
+  const deliveryFee = deliveryMethod === 'express' ? 9.99 : 4.99;
+  const finalTotal = total + (total > 0 ? deliveryFee : 0);
+
+  const handleCheckout = () => {
+    // Ici, vous pouvez implémenter la logique de paiement
+    alert('Redirection vers la page de paiement...');
+  };
 
   return (
     <Sheet>
@@ -31,7 +43,7 @@ export const Cart = () => {
           )}
         </Button>
       </SheetTrigger>
-      <SheetContent>
+      <SheetContent className="overflow-y-auto">
         <SheetHeader>
           <SheetTitle>Votre Panier</SheetTitle>
         </SheetHeader>
@@ -77,12 +89,62 @@ export const Cart = () => {
                   </div>
                 </div>
               ))}
-              <div className="mt-4 pt-4 border-t">
-                <div className="flex justify-between items-center mb-4">
-                  <span className="font-medium">Total:</span>
-                  <span className="font-bold">{total.toFixed(2)} €</span>
+
+              <div className="mt-6 space-y-6">
+                <div className="space-y-4">
+                  <h3 className="font-semibold">Mode de livraison</h3>
+                  <RadioGroup value={deliveryMethod} onValueChange={setDeliveryMethod}>
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="standard" id="standard" />
+                      <Label htmlFor="standard">Standard (4,99 €) - 3-5 jours ouvrés</Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="express" id="express" />
+                      <Label htmlFor="express">Express (9,99 €) - 1-2 jours ouvrés</Label>
+                    </div>
+                  </RadioGroup>
                 </div>
-                <Button className="w-full">Commander</Button>
+
+                <div className="space-y-4">
+                  <h3 className="font-semibold">Mode de paiement</h3>
+                  <RadioGroup value={paymentMethod} onValueChange={setPaymentMethod}>
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="card" id="card" />
+                      <Label htmlFor="card" className="flex items-center gap-2">
+                        <CreditCard className="h-4 w-4" />
+                        Carte bancaire
+                      </Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="paypal" id="paypal" />
+                      <Label htmlFor="paypal" className="flex items-center gap-2">
+                        <Wallet className="h-4 w-4" />
+                        PayPal
+                      </Label>
+                    </div>
+                  </RadioGroup>
+                </div>
+
+                <div className="border-t pt-4 space-y-4">
+                  <div className="flex justify-between items-center">
+                    <span>Sous-total:</span>
+                    <span>{total.toFixed(2)} €</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span>Frais de livraison:</span>
+                    <span>{deliveryFee.toFixed(2)} €</span>
+                  </div>
+                  <div className="flex justify-between items-center font-bold text-lg">
+                    <span>Total:</span>
+                    <span>{finalTotal.toFixed(2)} €</span>
+                  </div>
+                  <Button 
+                    className="w-full" 
+                    onClick={handleCheckout}
+                  >
+                    Payer maintenant
+                  </Button>
+                </div>
               </div>
             </>
           )}

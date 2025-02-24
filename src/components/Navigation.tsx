@@ -7,6 +7,7 @@ const categories = [
   { id: 'vetements', name: 'Vêtements' },
   { id: 'accessoires', name: 'Accessoires' },
   { id: 'electronique', name: 'Électronique' },
+  { id: 'maison', name: 'Maison' },
 ];
 
 export const Navigation = () => {
