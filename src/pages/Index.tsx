@@ -3,6 +3,7 @@ import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { motion } from 'framer-motion';
+import { useCart } from '@/contexts/CartContext';
 
 // Simulation de données de produits
 const featuredProducts = [
@@ -27,6 +28,8 @@ const featuredProducts = [
 ];
 
 const Index = () => {
+  const { addToCart } = useCart();
+
   return (
     <div className="min-h-screen bg-background">
       {/* Hero Section */}
@@ -83,6 +86,7 @@ const Index = () => {
                     <p className="text-foreground/60">{product.price}</p>
                     <Button 
                       className="w-full mt-4 bg-primary hover:bg-primary/90"
+                      onClick={() => addToCart(product)}
                     >
                       Ajouter au panier
                     </Button>
